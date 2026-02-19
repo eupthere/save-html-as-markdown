@@ -3,6 +3,9 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   modules: ["@wxt-dev/module-react"],
+  manifest: {
+    permissions: ["activeTab", "downloads"],
+  },
   vite: () => ({
     plugins: [tailwindcss()],
   }),
