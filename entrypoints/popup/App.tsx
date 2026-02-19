@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { injectPageService } from '@/lib/page-service';
 import { injectDownloadService } from '@/lib/download-service';
+import { injectImageService } from '@/lib/image-service';
 import { TabAdapter, RuntimeAdapter } from '@/lib/adapters';
 import type { PageMetadata } from '@/lib/page-service';
 
 type Status = 'loading' | 'ready' | 'saving' | 'saved' | 'error';
+
 
 function App() {
   const [metadata, setMetadata] = useState<PageMetadata | null>(null);
@@ -48,8 +50,14 @@ function App() {
     try {
       if (!pageServiceRef.current) throw new Error('Page service not ready');
 
-      const { markdown, filename } =
-        await pageServiceRef.current.extractPage({ embedImages });
+      let { markdown, filename } =
+        await pageServiceRef.current.extractPage();
+
+      if (embedImages) {
+        const imageService = injectImageService(new RuntimeAdapter());
+        markdown = await imageService.embedImages(markdown);
+      }
+
       const downloadService = injectDownloadService(new RuntimeAdapter());
       await downloadService.downloadMarkdown(markdown, filename);
       setStatus('saved');
