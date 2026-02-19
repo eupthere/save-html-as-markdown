@@ -1,5 +1,8 @@
-import { useState, useEffect } from 'react';
-import type { PageMetadata } from '@/lib/messages';
+import { useState, useEffect, useRef } from 'react';
+import { injectPageService } from '@/lib/page-service';
+import { injectDownloadService } from '@/lib/download-service';
+import { TabAdapter, RuntimeAdapter } from '@/lib/adapters';
+import type { PageMetadata } from '@/lib/page-service';
 
 type Status = 'loading' | 'ready' | 'saving' | 'saved' | 'error';
 
@@ -7,9 +10,12 @@ function App() {
   const [metadata, setMetadata] = useState<PageMetadata | null>(null);
   const [status, setStatus] = useState<Status>('loading');
   const [error, setError] = useState<string>('');
+  const pageServiceRef = useRef<ReturnType<typeof injectPageService> | null>(
+    null,
+  );
 
   useEffect(() => {
-    async function fetchMetadata() {
+    async function init() {
       try {
         const [tab] = await browser.tabs.query({
           active: true,
@@ -21,38 +27,30 @@ function App() {
           return;
         }
 
-        const response = await browser.tabs.sendMessage(tab.id, {
-          type: 'GET_METADATA',
-        });
+        const pageService = injectPageService(new TabAdapter(tab.id));
+        pageServiceRef.current = pageService;
 
-        if (response?.type === 'PAGE_METADATA') {
-          setMetadata(response as PageMetadata);
-          setStatus('ready');
-        } else {
-          setError('Could not extract page content');
-          setStatus('error');
-        }
+        const meta = await pageService.getMetadata();
+        setMetadata(meta);
+        setStatus('ready');
       } catch {
         setError('Content script not loaded. Try refreshing the page.');
         setStatus('error');
       }
     }
 
-    fetchMetadata();
+    init();
   }, []);
 
   async function handleSave() {
     setStatus('saving');
     try {
-      const [tab] = await browser.tabs.query({
-        active: true,
-        currentWindow: true,
-      });
-      if (!tab?.id) {
-        throw new Error('No active tab');
-      }
+      if (!pageServiceRef.current) throw new Error('Page service not ready');
 
-      await browser.tabs.sendMessage(tab.id, { type: 'EXTRACT_PAGE' });
+      const { markdown, filename } =
+        await pageServiceRef.current.extractPage();
+      const downloadService = injectDownloadService(new RuntimeAdapter());
+      await downloadService.downloadMarkdown(markdown, filename);
       setStatus('saved');
     } catch {
       setError('Failed to save. Try refreshing the page.');
