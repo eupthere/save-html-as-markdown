@@ -1,1 +1,6 @@
 @import "tailwindcss";
+
+@theme {
+  --color-eigengrau: #16161d;
+  --color-highlight: #65FEB6;
+}

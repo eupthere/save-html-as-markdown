@@ -1,17 +1,16 @@
-import { useState, useEffect, useRef } from 'react';
-import { injectPageService } from '@/lib/page-service';
-import { injectDownloadService } from '@/lib/download-service';
-import { injectImageService } from '@/lib/image-service';
-import { TabAdapter, RuntimeAdapter } from '@/lib/adapters';
-import type { PageMetadata } from '@/lib/page-service';
+import { useState, useEffect, useRef } from "react";
+import { injectPageService } from "@/lib/page-service";
+import { injectDownloadService } from "@/lib/download-service";
+import { injectImageService } from "@/lib/image-service";
+import { TabAdapter, RuntimeAdapter } from "@/lib/adapters";
+import type { PageMetadata } from "@/lib/page-service";
 
-type Status = 'loading' | 'ready' | 'saving' | 'saved' | 'error';
-
+type Status = "loading" | "ready" | "saving" | "saved" | "error";
 
 function App() {
   const [metadata, setMetadata] = useState<PageMetadata | null>(null);
-  const [status, setStatus] = useState<Status>('loading');
-  const [error, setError] = useState<string>('');
+  const [status, setStatus] = useState<Status>("loading");
+  const [error, setError] = useState<string>("");
   const [embedImages, setEmbedImages] = useState(false);
   const pageServiceRef = useRef<ReturnType<typeof injectPageService> | null>(
     null,
@@ -25,8 +24,8 @@ function App() {
           currentWindow: true,
         });
         if (!tab?.id) {
-          setError('No active tab found');
-          setStatus('error');
+          setError("No active tab found");
+          setStatus("error");
           return;
         }
 
@@ -35,10 +34,10 @@ function App() {
 
         const meta = await pageService.getMetadata();
         setMetadata(meta);
-        setStatus('ready');
+        setStatus("ready");
       } catch {
-        setError('Content script not loaded. Try refreshing the page.');
-        setStatus('error');
+        setError("Content script not loaded. Try refreshing the page.");
+        setStatus("error");
       }
     }
 
@@ -46,12 +45,11 @@ function App() {
   }, []);
 
   async function handleSave() {
-    setStatus('saving');
+    setStatus("saving");
     try {
-      if (!pageServiceRef.current) throw new Error('Page service not ready');
+      if (!pageServiceRef.current) throw new Error("Page service not ready");
 
-      let { markdown, filename } =
-        await pageServiceRef.current.extractPage();
+      let { markdown, filename } = await pageServiceRef.current.extractPage();
 
       if (embedImages) {
         const imageService = injectImageService(new RuntimeAdapter());
@@ -60,10 +58,10 @@ function App() {
 
       const downloadService = injectDownloadService(new RuntimeAdapter());
       await downloadService.downloadMarkdown(markdown, filename);
-      setStatus('saved');
+      setStatus("saved");
     } catch {
-      setError('Failed to save. Try refreshing the page.');
-      setStatus('error');
+      setError("Failed to save. Try refreshing the page.");
+      setStatus("error");
     }
   }
 
@@ -73,21 +71,21 @@ function App() {
         Save as Markdown
       </h1>
 
-      {status === 'loading' && (
+      {status === "loading" && (
         <p className="text-sm text-gray-500">Loading page info...</p>
       )}
 
-      {status === 'error' && (
+      {status === "error" && (
         <div className="text-sm text-red-600 bg-red-50 rounded-md p-3">
           {error}
         </div>
       )}
 
-      {metadata && status !== 'error' && (
+      {metadata && status !== "error" && (
         <div className="space-y-3">
           <div className="space-y-1.5">
             <p className="text-sm font-medium text-gray-900 leading-snug line-clamp-2">
-              {metadata.title || 'Untitled'}
+              {metadata.title || "Untitled"}
             </p>
             {metadata.author && (
               <p className="text-xs text-gray-500">{metadata.author}</p>
@@ -108,27 +106,27 @@ function App() {
               type="checkbox"
               checked={embedImages}
               onChange={(e) => setEmbedImages(e.target.checked)}
-              className="rounded border-gray-300"
             />
             Embed images as data URLs
           </label>
 
           <button
             onClick={handleSave}
-            disabled={status === 'saving' || status === 'saved'}
-            className={`w-full rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-              status === 'saved'
-                ? 'bg-green-600 text-white'
-                : status === 'saving'
-                  ? 'bg-gray-300 text-gray-500 cursor-wait'
-                  : 'bg-gray-900 text-white hover:bg-gray-700 cursor-pointer'
+            disabled={status === "saving" || status === "saved"}
+            className={`w-full px-3 py-2 text-sm font-medium transition-colors ${
+              status === "saved"
+                ? "bg-white text-eigengrau inset-ring-2 inset-ring-eigengrau cursor-default"
+                : status === "saving"
+                  ? "bg-white text-eigengrau inset-ring-2 inset-ring-eigengrau cursor-wait"
+                  : // : "bg-eigengrau text-white hover:bg-white hover:text-eigengrau hover:inset-ring-2 inset-ring-eigengrau cursor-pointer"
+                    "bg-eigengrau text-white hover:text-highlight cursor-pointer"
             }`}
           >
-            {status === 'saving'
-              ? 'Saving...'
-              : status === 'saved'
-                ? 'Saved!'
-                : 'Save as Markdown'}
+            {status === "saving"
+              ? "Saving..."
+              : status === "saved"
+                ? "Saved!"
+                : "Save as Markdown"}
           </button>
         </div>
       )}
