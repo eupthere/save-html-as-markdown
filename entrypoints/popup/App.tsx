@@ -4,6 +4,7 @@ import { injectDownloadService } from "@/lib/download-service";
 import { injectImageService } from "@/lib/image-service";
 import { TabAdapter, RuntimeAdapter } from "@/lib/adapters";
 import type { PageMetadata } from "@/lib/page-service";
+import { Checkbox } from "@/components/Checkbox";
 
 type Status = "loading" | "ready" | "saving" | "saved" | "error";
 
@@ -101,14 +102,11 @@ function App() {
             </div>
           </div>
 
-          <label className="flex items-center gap-2 text-xs text-gray-600 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              checked={embedImages}
-              onChange={(e) => setEmbedImages(e.target.checked)}
-            />
-            Embed images as data URLs
-          </label>
+          <Checkbox
+            label="Embed images as data URLs"
+            checked={embedImages}
+            onChange={setEmbedImages}
+          />
 
           <button
             onClick={handleSave}
