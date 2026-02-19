@@ -13,5 +13,5 @@ class DownloadService {
 
 export const [provideDownloadService, injectDownloadService] = defineProxy(
   () => new DownloadService(),
-  { namespace: '__lucas-download__' },
+  { namespace: '__save-html-as-markdown-download__' },
 );

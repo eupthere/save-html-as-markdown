@@ -46,5 +46,5 @@ class PageService {
 
 export const [providePageService, injectPageService] = defineProxy(
   () => new PageService(),
-  { namespace: '__lucas-page__' },
+  { namespace: '__save-html-as-markdown-page__' },
 );

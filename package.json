@@ -1,6 +1,6 @@
 {
-  "name": "lucas-save-extension",
-  "description": "A browser extension to save Lucas page to markdown.",
+  "name": "save-html-as-markdown",
+  "description": "A browser extension to save HTML pages to markdown.",
   "private": true,
   "version": "0.1.0",
   "type": "module",

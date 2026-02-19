@@ -41,5 +41,5 @@ class ImageService {
 
 export const [provideImageService, injectImageService] = defineProxy(
   () => new ImageService(),
-  { namespace: '__lucas-image__' },
+  { namespace: '__save-html-as-markdown-image__' },
 );
