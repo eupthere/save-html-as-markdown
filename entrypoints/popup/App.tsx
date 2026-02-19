@@ -10,6 +10,7 @@ function App() {
   const [metadata, setMetadata] = useState<PageMetadata | null>(null);
   const [status, setStatus] = useState<Status>('loading');
   const [error, setError] = useState<string>('');
+  const [embedImages, setEmbedImages] = useState(false);
   const pageServiceRef = useRef<ReturnType<typeof injectPageService> | null>(
     null,
   );
@@ -48,7 +49,7 @@ function App() {
       if (!pageServiceRef.current) throw new Error('Page service not ready');
 
       const { markdown, filename } =
-        await pageServiceRef.current.extractPage();
+        await pageServiceRef.current.extractPage({ embedImages });
       const downloadService = injectDownloadService(new RuntimeAdapter());
       await downloadService.downloadMarkdown(markdown, filename);
       setStatus('saved');
@@ -93,6 +94,16 @@ function App() {
               )}
             </div>
           </div>
+
+          <label className="flex items-center gap-2 text-xs text-gray-600 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={embedImages}
+              onChange={(e) => setEmbedImages(e.target.checked)}
+              className="rounded border-gray-300"
+            />
+            Embed images as data URLs
+          </label>
 
           <button
             onClick={handleSave}

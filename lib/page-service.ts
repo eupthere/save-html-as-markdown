@@ -3,6 +3,7 @@ import { extractPage } from './extractor';
 import { toMarkdown } from './converter';
 import { buildFrontmatter } from './frontmatter';
 import { sanitizeFilename } from './filename';
+import { embedImages } from './image-embed';
 
 export interface PageMetadata {
   title: string;
@@ -28,8 +29,13 @@ class PageService {
     };
   }
 
-  async extractPage(): Promise<{ markdown: string; filename: string }> {
+  async extractPage(options?: {
+    embedImages?: boolean;
+  }): Promise<{ markdown: string; filename: string }> {
     const extracted = extractPage(document);
+    const html = options?.embedImages
+      ? await embedImages(extracted.html)
+      : extracted.html;
     const frontmatter = buildFrontmatter({
       title: extracted.title,
       author: extracted.author,
@@ -38,7 +44,7 @@ class PageService {
       url: extracted.url,
       domain: extracted.domain,
     });
-    const markdown = frontmatter + toMarkdown(extracted.html);
+    const markdown = frontmatter + toMarkdown(html);
     const filename = sanitizeFilename(extracted.title);
     return { markdown, filename };
   }
