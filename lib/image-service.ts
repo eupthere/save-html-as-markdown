@@ -1,4 +1,5 @@
 import { defineProxy } from 'comctx';
+import { logger } from './logger';
 
 function blobToDataUrl(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -25,7 +26,8 @@ class ImageService {
           const blob = await res.blob();
           const dataUrl = await blobToDataUrl(blob);
           return [url, dataUrl] as const;
-        } catch {
+        } catch (error) {
+          logger.error('Failed to embed image', url, error);
           return null;
         }
       }),

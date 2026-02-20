@@ -5,6 +5,7 @@ import { injectImageService } from "@/lib/image-service";
 import { TabAdapter, RuntimeAdapter } from "@/lib/adapters";
 import type { PageMetadata } from "@/lib/page-service";
 import { Checkbox } from "@/components/Checkbox";
+import { logger } from "@/lib/logger";
 
 type Status = "loading" | "ready" | "saving" | "saved" | "error";
 
@@ -36,7 +37,8 @@ function App() {
         const meta = await pageService.getMetadata();
         setMetadata(meta);
         setStatus("ready");
-      } catch {
+      } catch (error) {
+        logger.error('Failed to load page metadata', error);
         setError("Content script not loaded. Try refreshing the page.");
         setStatus("error");
       }
@@ -60,7 +62,8 @@ function App() {
       const downloadService = injectDownloadService(new RuntimeAdapter());
       await downloadService.downloadMarkdown(markdown, filename);
       setStatus("saved");
-    } catch {
+    } catch (error) {
+      logger.error('Failed to save markdown', error);
       setError("Failed to save. Try refreshing the page.");
       setStatus("error");
     }
