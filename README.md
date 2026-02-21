@@ -1,3 +1,5 @@
+![Github: Save HTML as Markdown](./.github/assets/screenshot.png)
+
 # Save HTML as Markdown
 
 A browser extension that saves any webpage as a clean Markdown file with YAML frontmatter.
