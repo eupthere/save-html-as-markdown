@@ -34,17 +34,49 @@ The article content converted to Markdown...
 
 Markdown conversion uses ATX-style headings (`#`), fenced code blocks (`` ``` ``), `-` bullet lists, `**` bold, `*` italic, and inlined links.
 
-## Install
+## Build from Source
 
-### From Source
+### Requirements
+
+- **OS**: macOS, Linux, or Windows
+- **Node.js**: v22 or later — [install](https://nodejs.org/)
+- **pnpm**: v10 or later — `npm install -g pnpm` after installing Node.js
+
+### Steps
 
 ```sh
+# 1. Install dependencies
 pnpm install
-pnpm build          # Chrome
-pnpm build:firefox  # Firefox
+
+# 2. Build the extension
+pnpm build              # Chrome (Manifest V3)
+pnpm build:firefox      # Firefox (Manifest V2)
 ```
 
-Then load the extension from `.output/chrome-mv3` (or `.output/firefox-mv2`) as an unpacked extension in your browser.
+Build output is written to:
+
+- `.output/chrome-mv3/` — Chrome build
+- `.output/firefox-mv2/` — Firefox build
+
+### Load the Extension
+
+**Chrome**: Go to `chrome://extensions`, enable "Developer mode", click "Load unpacked", and select `.output/chrome-mv3`.
+
+**Firefox**: Go to `about:debugging#/runtime/this-firefox`, click "Load Temporary Add-on", and select any file inside `.output/firefox-mv2`.
+
+### Third-Party Libraries
+
+All third-party libraries are open source and installed via pnpm from the npm registry. No vendored or modified copies are included. Source code for each library can be found at:
+
+| Library | Source |
+|---|---|
+| [Defuddle](https://www.npmjs.com/package/defuddle) | https://github.com/kepano/defuddle |
+| [Turndown](https://www.npmjs.com/package/turndown) | https://github.com/mixmark-io/turndown |
+| [turndown-plugin-gfm](https://www.npmjs.com/package/turndown-plugin-gfm) | https://github.com/mixmark-io/turndown-plugin-gfm |
+| [comctx](https://www.npmjs.com/package/comctx) | https://github.com/molvqingtai/comctx |
+| [React](https://www.npmjs.com/package/react) | https://github.com/facebook/react |
+| [WXT](https://www.npmjs.com/package/wxt) | https://github.com/wxt-dev/wxt |
+| [Tailwind CSS](https://www.npmjs.com/package/tailwindcss) | https://github.com/tailwindlabs/tailwindcss |
 
 ## Development
 
@@ -72,7 +104,7 @@ background.ts          Handles file download + image fetching
   lib/image-service.ts      Fetches and base64-encodes images (optional)
 ```
 
-Services communicate between content script, background, and popup through [comctx](https://github.com/poyoho/comctx) proxies.
+Services communicate between content script, background, and popup through [comctx](https://www.npmjs.com/package/comctx) proxies.
 
 ## Permissions
 
