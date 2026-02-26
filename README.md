@@ -1,5 +1,13 @@
 ![Github: Save HTML as Markdown](./.github/assets/screenshot.png)
 
+<a href="https://chromewebstore.google.com/detail/save-html-as-markdown/fecbffppkniebokpogicppegfladcdad">
+  <img src=".github/assets/promo-cws.svg" height="72">
+</a>
+<a href="https://addons.mozilla.org/en-US/firefox/addon/save-html-as-markdown/">
+  <img src=".github/assets/promo-fas.svg" height="72">
+</a>
+</br>
+
 # Save HTML as Markdown
 
 A browser extension that saves any webpage as a clean Markdown file with YAML frontmatter.
