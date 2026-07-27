@@ -49,19 +49,27 @@ Markdown conversion uses ATX-style headings (`#`), fenced code blocks (`` ``` ``
 ### Requirements
 
 - **OS**: macOS, Linux, or Windows
-- **Node.js**: v22 or later — [install](https://nodejs.org/)
-- **pnpm**: v10 or later — `npm install -g pnpm` after installing Node.js
+- **mise**: recommended for matching the repo's Node version
+- **Corepack**: included with modern Node.js and used to activate pnpm
 
 ### Steps
 
 ```sh
-# 1. Install dependencies
+# 1. Install the repo's Node.js version
+mise install
+
+# 2. Enable Corepack once on your machine
+corepack enable
+
+# 3. Install dependencies
 pnpm install
 
-# 2. Build the extension
+# 4. Build the extension
 pnpm build              # Chrome (Manifest V3)
 pnpm build:firefox      # Firefox (Manifest V2)
 ```
+
+The project pins Node.js in [`mise.toml`](./mise.toml) and pins the pnpm version in [`package.json`](./package.json) via the `packageManager` field.
 
 Build output is written to:
 
